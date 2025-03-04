@@ -18,6 +18,8 @@ const authSlice = createSlice({
 		setAuth: (state)  => {
 			state.isAuthenticated = true;
 		},
+		//este estado globla es el que utilizamos para saber 
+		// si el usuario esta autenticado
 		logout: (state)  => {
 			state.isAuthenticated = false;
 		},

@@ -14,19 +14,28 @@ import type {
 	FetchBaseQueryError,
 } from '@reduxjs/toolkit/query';
 import { setAuth, logout } from '../features/authSlice';
+import { performLogout } from '../features/authApiSlice';
+
 import { Mutex } from 'async-mutex';
 
 const mutex = new Mutex();
+
 const baseQuery = fetchBaseQuery({
 	baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
 	credentials: 'include',
 });
 
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown,	FetchBaseQueryError> = async (args, api, extraOptions) => {
+	//Espera a que el mutex se libere antes de continuar. 
+	//Esto asegura que solo una solicitud de reautenticación 
+	//se procese a la vez.
 	await mutex.waitForUnlock();
+	//hacemos la solicitud y guardamos a ver que podemos hacer
 	let result = await baseQuery(args, api, extraOptions);
 	/*si no se tiene acceso intentara utilizar el token para refrescar*/
 	if (result.error && result.error.status === 401) {
+		//para asegurarnos que no se este haciendo mas de una
+		//reautenticacion
 		if (!mutex.isLocked()) {
 			const release = await mutex.acquire();
 			try {
@@ -45,8 +54,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown,	FetchBaseQue
 					api.dispatch(setAuth());
 					result = await baseQuery(args, api, extraOptions);
 				} else {
-					/*si no se logra se ejecuta logout*/
-					api.dispatch(logout());
+					await performLogout(baseQuery, api, extraOptions);
 				}
 			} finally {
 				release();

@@ -9,7 +9,7 @@ import { apiSlice } from './services/apiSlice';
 // Importamos el reducer de autenticación, que maneja el estado relacionado con la autenticación del usuario.
 import authReducer from './features/authSlice';
 
-// Definimos una función llamada makeStore que crea y configura la tienda de Redux.
+// Definimos una función llamada makeStore que crea y configura la store de Redux.
 export const makeStore = () =>
     configureStore({
         // Definimos los "reducers" que manejarán diferentes partes del estado de la aplicación.

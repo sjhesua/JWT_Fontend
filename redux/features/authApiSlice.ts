@@ -1,5 +1,11 @@
 //Maneja las PETICIONES de autenticacion y registro de usuarios
 import { apiSlice } from '../services/apiSlice';
+import type {
+	BaseQueryFn,
+	FetchArgs,
+	FetchBaseQueryError,
+} from '@reduxjs/toolkit/query';
+import { logout as logoutAction } from './authSlice';
 
 interface User {
 	first_name: string;
@@ -21,22 +27,20 @@ interface CreateUserResponse {
 y sean mas faciles de manejar*/
 const authApiSlice = apiSlice.injectEndpoints({
 	endpoints: builder => ({
-		
 		retrieveUser: builder.query<User, void>({
 			query: () => '/users/me/',
 		}),
 		/*el provider es facebook o google*/
-		socialAuthenticate: builder.mutation<CreateUserResponse, SocialAuthArgs>
-			({
-				query: ({ provider, state, code }) => ({
-					url: `/o/${provider}/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`,
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-				}),
+		socialAuthenticate: builder.mutation<CreateUserResponse, SocialAuthArgs>({
+			query: ({ provider, state, code }) => ({
+				url: `/o/${provider}/?state=${encodeURIComponent(state)}&code=${encodeURIComponent(code)}`,
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
 			}),
+		}),
 		login: builder.mutation({
 			query: ({ email, password }) => ({
 				url: '/jwt/create/',
@@ -105,3 +109,20 @@ export const {
 	useResetPasswordMutation,
 	useResetPasswordConfirmMutation,
 } = authApiSlice;
+
+// Función de utilidad para realizar la mutación de cierre de sesión
+export const performLogout = async (baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>, api: any, extraOptions: any) => {
+    const result = await baseQuery(
+        {
+            url: '/logout/',
+            method: 'POST',
+        },
+        api,
+        extraOptions
+    );
+    if (result.error) {
+        console.error('Logout failed:', result.error);
+    } else {
+        api.dispatch(logoutAction());
+    }
+};
