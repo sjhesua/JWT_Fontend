@@ -14,7 +14,6 @@ import type {
 	FetchBaseQueryError,
 } from '@reduxjs/toolkit/query';
 import { setAuth, logout } from '../features/authSlice';
-import { performLogout } from '../features/authApiSlice';
 
 import { Mutex } from 'async-mutex';
 
@@ -54,7 +53,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown,	FetchBaseQue
 					api.dispatch(setAuth());
 					result = await baseQuery(args, api, extraOptions);
 				} else {
-					await performLogout(baseQuery, api, extraOptions);
+					api.dispatch(logout());
 				}
 				if (result.error?.status === 401 && refreshResult?.error) {
                     return refreshResult;

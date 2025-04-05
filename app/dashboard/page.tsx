@@ -6,7 +6,7 @@ import Spinner from '@/components/common/Spinner';
 
 export default function Page() {
 	const { data: user, isLoading, isFetching } = useRetrieveUserQuery();
-
+	
 	const config = [
 		{
 			label: 'First Name',
@@ -25,7 +25,7 @@ export default function Page() {
 	if (isLoading || isFetching) {
 		return (
 			<div className='flex justify-center my-8'>
-				<Spinner lg />
+				Dashboard<Spinner lg />
 			</div>
 		);
 	}

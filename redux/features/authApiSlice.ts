@@ -41,6 +41,7 @@ const authApiSlice = apiSlice.injectEndpoints({
 				},
 			}),
 		}),
+		
 		login: builder.mutation({
 			query: ({ email, password }) => ({
 				url: '/jwt/create/',
@@ -48,6 +49,7 @@ const authApiSlice = apiSlice.injectEndpoints({
 				body: { email, password },
 			}),
 		}),
+
 		register: builder.mutation({
 			query: ({
 				first_name,

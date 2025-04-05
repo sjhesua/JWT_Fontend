@@ -7,7 +7,8 @@ interface Props {
 	isBanner?: boolean;
 	href?: string;
 	children: React.ReactNode;
-	[rest: string]: any;
+	className?: string;
+	onClick?: () => void;
 }
 
 export default function NavLink({
@@ -16,10 +17,11 @@ export default function NavLink({
 	isBanner,
 	href,
 	children,
-	...rest
+	className,
+	onClick,
 }: Props) {
-	const className = cn(
-		rest.className,
+	const classNamevar = cn(
+		className,
 		'text-white rounded-md px-3 py-2 font-medium',
 		{
 			'bg-gray-900': isSelected,
@@ -33,14 +35,14 @@ export default function NavLink({
 	/*si no tiene se combierte en un simple span*/
 	if (!href) {
 		return (
-			<span className={className} role='button' onClick={rest.onClick}>
+			<span className={classNamevar} role='button' onClick={onClick}>
 				{children}
 			</span>
 		);
 	}
 
 	return (
-		<Link className={className} href={href}>
+		<Link className={classNamevar} href={href}>
 			{children}
 		</Link>
 	);

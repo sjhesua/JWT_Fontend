@@ -8,8 +8,6 @@ import { useLogoutMutation } from '@/redux/features/authApiSlice';
 import { logout as setLogout } from '@/redux/features/authSlice';
 import NavLink from './NavLink';
 
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-
 export default function Navbar() {
 	const pathname = usePathname();
 	const dispatch = useAppDispatch();
@@ -104,15 +102,6 @@ export default function Navbar() {
 								</div>
 							</div>
 						</div>
-
-						<Disclosure.Panel className='sm:hidden'>
-							XXXXXXXXXXXXXXXXX
-							<div className='space-y-1 px-2 pb-3 pt-2'>
-								{isAuthenticated
-									? authLinks(true)
-									: guestLinks(true)}
-							</div>
-						</Disclosure.Panel>
 					</>
 				)}
 			</Disclosure>

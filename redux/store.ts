@@ -20,7 +20,7 @@ export const makeStore = () =>
             // Añadimos el reducer de autenticación.
             auth: authReducer,
         },
-        // Añadimos middleware adicional a la tienda.
+        // Añadimos middleware adicional a la store.
         middleware: getDefaultMiddleware =>
             // Añadimos el middleware de apiSlice para manejar las solicitudes API.
             getDefaultMiddleware().concat(apiSlice.middleware),
