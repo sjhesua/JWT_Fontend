@@ -1,47 +1,46 @@
 'use client';
-
-import { useRetrieveUserQuery } from '@/redux/features/authApiSlice';
+import useFetchUserData from '@/hooks/use-userme';
 import List from '@/components/common/List';
 import Spinner from '@/components/common/Spinner';
 
 export default function Page() {
-	const { data: user, isLoading, isFetching } = useRetrieveUserQuery();
-	
-	const config = [
-		{
-			label: 'First Name',
-			value: user?.first_name,
-		},
-		{
-			label: 'Last Name',
-			value: user?.last_name,
-		},
-		{
-			label: 'Email',
-			value: user?.email,
-		},
-	];
+    const { userData, isLoading } = useFetchUserData();
 
-	if (isLoading || isFetching) {
-		return (
-			<div className='flex justify-center my-8'>
-				Dashboard<Spinner lg />
-			</div>
-		);
-	}
+    const config = [
+        {
+            label: 'First Name',
+            value: userData?.first_name,
+        },
+        {
+            label: 'Last Name',
+            value: userData?.last_name,
+        },
+        {
+            label: 'Email',
+            value: userData?.email,
+        },
+    ];
 
-	return (
-		<>
-			<header className='bg-white shadow'>
-				<div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8'>
-					<h1 className='text-3xl font-bold tracking-tight text-gray-900'>
-						Dashboard
-					</h1>
-				</div>
-			</header>
-			<main className='mx-auto max-w-7xl py-6 my-8 sm:px-6 lg:px-8'>
-				<List config={config} />
-			</main>
-		</>
-	);
+    if (isLoading) {
+        return (
+            <div className='flex justify-center my-8'>
+                <Spinner lg />
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <header className='bg-white shadow'>
+                <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8'>
+                    <h1 className='text-3xl font-bold tracking-tight text-gray-900'>
+                        Dashboard
+                    </h1>
+                </div>
+            </header>
+            <main className='mx-auto max-w-7xl py-6 my-8 sm:px-6 lg:px-8'>
+                <List config={config} />
+            </main>
+        </>
+    );
 }

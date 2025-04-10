@@ -3,24 +3,26 @@
 import { usePathname } from 'next/navigation';
 import { Disclosure, Button } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { useLogoutMutation } from '@/redux/features/authApiSlice';
 import { logout as setLogout } from '@/redux/features/authSlice';
 import NavLink from './NavLink';
 
+import { useUser } from '@/context/UserContext';
+
 export default function Navbar() {
 	const pathname = usePathname();
 	const dispatch = useAppDispatch();
+	
+	const { isLoggedIn,setIsLoggedIn } = useUser();
 
 	const [logout] = useLogoutMutation();
-	//state => state.auth es una función de selección (selector) que toma el estado global de Redux (state) 
-	// y devuelve la parte del estado que corresponde al slice de autenticación (state.auth).
-	const { isAuthenticated } = useAppSelector(state => state.auth);
 
 	const handleLogout = () => {
 		logout(undefined)
 			.unwrap()
 			.then(() => {
+				setIsLoggedIn(false);
 				dispatch(setLogout());
 			});
 	};
@@ -94,7 +96,7 @@ export default function Navbar() {
 									</div>
 									<div className='hidden sm:ml-6 sm:block'>
 										<div className='flex space-x-4'>
-											{isAuthenticated
+											{isLoggedIn
 												? authLinks(false)
 												: guestLinks(false)}
 										</div>

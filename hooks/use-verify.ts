@@ -1,21 +1,38 @@
-import { useEffect } from 'react';
-import { useAppDispatch } from '@/redux/hooks';
-import { setAuth, finishInitialLoad } from '@/redux/features/authSlice';
-import { useVerifyMutation } from '@/redux/features/authApiSlice';
+import { useUser } from '@/context/UserContext';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+//-------------------------------------------------------
 
 export default function useVerify() {
-	const dispatch = useAppDispatch();
+	const { setUser, setIsLoggedIn } = useUser();
 
-	const [verify] = useVerifyMutation();
+	const router = useRouter();
 
-	useEffect(() => {
-		verify(undefined)
-			.unwrap()
-			.then(() => {
-				dispatch(setAuth());
-			})
-			.finally(() => {
-				dispatch(finishInitialLoad());
+	const verifyUser = async () => {
+		try {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/jwt/verify/`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
 			});
-	}, []);
+
+			if (!response.ok) {
+				throw new Error('Failed to authenticate');
+			}
+			setIsLoggedIn(true);
+			toast.info('Token verificado por el backend');
+		} catch (error) {
+			toast.error('Login failed. Please check your credentials.');
+			// si no se logra verificar el token, redirigir a la página de login
+			router.push('auth/login');
+		} finally {
+			setIsLoggedIn(false);
+		}
+	}
+	
+	return {
+		verifyUser,
+	};
 }

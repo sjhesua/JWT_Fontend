@@ -1,20 +1,20 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/redux/hooks';
-
-import { useLoginMutation } from '@/redux/features/authApiSlice';
-import { setAuth } from '@/redux/features/authSlice';
 import { toast } from 'react-toastify';
+//
+import { useUser } from '@/context/UserContext';
 
 export default function useLogin() {
+	const { setUser, setIsLoggedIn } = useUser();
+
 	const router = useRouter();
-	const dispatch = useAppDispatch();
-	const [login, { isLoading }] = useLoginMutation();
 
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
 	});
+
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { email, password } = formData;
 
@@ -24,19 +24,31 @@ export default function useLogin() {
 		setFormData({ ...formData, [name]: value });
 	};
 
-	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
-		login({ email, password })
-			.unwrap()
-			.then(() => {
-				dispatch(setAuth());
-				toast.success('Logged');
-				window.location.href = '/dashboard';
-			})
-			.catch(() => {
-				toast.error('Failed to log in');
+		setIsLoading(true);
+		
+		try {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/jwt/create/`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email, password }),
+				credentials: 'include',
 			});
+
+			if (!response.ok) {
+				throw new Error('Failed to authenticate');
+			}
+			setIsLoggedIn(true);
+			toast.success('Login successful!');
+			router.push('/dashboard');
+		} catch (error) {
+			toast.error('Login failed. Please check your credentials.');
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return {

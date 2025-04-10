@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LoginForm } from '@/components/forms';
+import LoginForm from '@/components/forms/LoginForm';
 import SocialButtons from '@/components/common/SocialButtons';
 import type { Metadata } from 'next';
 

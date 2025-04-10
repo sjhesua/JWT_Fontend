@@ -4,6 +4,8 @@ import Footer from "@/components/common/Footer";
 import Provider from "@/redux/provider";
 import Setup from "@/components/utils/Setup";
 
+import { UserProvider } from '@/context/UserContext';
+
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -19,14 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Provider>
-          <Setup/>
-          <Navbar />
-          <div>
-            {children}
-          </div>
-          <Footer />
-        </Provider>
+        <UserProvider>
+          <Provider>
+            <Setup />
+            <Navbar />
+            <div>
+              {children}
+            </div>
+            <Footer />
+          </Provider>
+        </UserProvider>
       </body>
     </html>
   );
