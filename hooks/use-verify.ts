@@ -1,10 +1,12 @@
 import { useUser } from '@/context/UserContext';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import useRefresh from '@/hooks/use-refresh';
 //-------------------------------------------------------
 
 export default function useVerify() {
-	const { setUser, setIsLoggedIn } = useUser();
+	const { setUser, setIsLoggedIn, isRefreshingToken, setIsRefreshingToken } = useUser();
+	const { refreshToken } = useRefresh();
 
 	const router = useRouter();
 
@@ -17,18 +19,22 @@ export default function useVerify() {
 				},
 				credentials: 'include',
 			});
-
+			
 			if (!response.ok) {
-				throw new Error('Failed to authenticate');
-			}
+                if (response.status === 401) {
+                    await refreshToken(); // Usar la función compartida para manejar el refresco
+                    return verifyUser(); // Reintentar la verificación después de refrescar
+                } else {
+                    toast.error('Error al autenticar.');
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+            }
 			setIsLoggedIn(true);
 			toast.info('Token verificado por el backend');
 		} catch (error) {
-			toast.error('Login failed. Please check your credentials.');
-			// si no se logra verificar el token, redirigir a la página de login
-			router.push('auth/login');
-		} finally {
 			setIsLoggedIn(false);
+			toast.error('Login failed. Please check your credentials.');
+			router.push('auth/login');
 		}
 	}
 	

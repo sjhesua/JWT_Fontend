@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-
+import useRefresh from '@/hooks/use-refresh'; // Importa el hook useRefresh
 interface UserData {
     first_name: string;
     last_name: string;
@@ -10,6 +10,7 @@ interface UserData {
 export default function useFetchUserData() {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { refreshToken } = useRefresh();
 
     const fetchUserData = async () => {
         try {
@@ -22,13 +23,17 @@ export default function useFetchUserData() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to authenticate');
+                if (response.status === 401) {
+                    await refreshToken(); 
+                    return fetchUserData(); 
+                } else {
+                    toast.error('Error al autenticar.');
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
-
             const data = await response.json();
             setUserData(data);
         } catch (error) {
-            console.error(error);
             toast.error('Error al pedir datos');
         } finally {
             setIsLoading(false);

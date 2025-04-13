@@ -13,6 +13,8 @@ interface UserContextType {
     setUser: (user: User | null) => void;
     isLoggedIn: boolean;
     setIsLoggedIn: (isLoggedIn: boolean) => void;
+    isRefreshingToken: boolean;
+    setIsRefreshingToken: (isRefreshing: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -20,14 +22,16 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
+    const [isRefreshingToken, setIsRefreshingToken] = useState<boolean>(false);
     return (
         <UserContext.Provider
             value={{
                 user,
                 setUser,
                 isLoggedIn,
-                setIsLoggedIn
+                setIsLoggedIn,
+                isRefreshingToken,
+                setIsRefreshingToken,
             }}
         >
             {children}

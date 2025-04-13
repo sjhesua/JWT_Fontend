@@ -22,12 +22,11 @@ export default function RequireAuth({ children }: Props) {
             if (!isLoggedIn) {
                 toast.info('Comprobando el token...');
                 try {
-                    await verifyUser(); // Llama a verifyUser para verificar el token
-                    toast.info('Usuario verificado por el backend');
+                    await verifyUser();
                 } catch (error) {
                     console.error('Error al verificar el token:', error);
                     toast.error('Redirigiendo al login...');
-                    router.push('/auth/login2'); // Redirige si no se puede verificar
+                    router.push('/auth/login'); // Redirige si no se puede verificar
                 }
             }
         }
