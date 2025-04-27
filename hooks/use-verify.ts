@@ -1,3 +1,5 @@
+//funcion creada por jhesua
+import { useRef } from 'react';
 import { useUser } from '@/context/UserContext';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -5,9 +7,9 @@ import useRefresh from '@/hooks/use-refresh';
 //-------------------------------------------------------
 
 export default function useVerify() {
-	const { setUser, setIsLoggedIn, isRefreshingToken, setIsRefreshingToken } = useUser();
+	const { setUser, setIsLoggedIn } = useUser();
 	const { refreshToken } = useRefresh();
-
+	const hasRefreshed = useRef(false);
 	const router = useRouter();
 
 	const verifyUser = async () => {
@@ -21,7 +23,8 @@ export default function useVerify() {
 			});
 			
 			if (!response.ok) {
-                if (response.status === 401) {
+                if (response.status === 401 && !hasRefreshed.current) {
+					hasRefreshed.current = true;
                     await refreshToken(); // Usar la función compartida para manejar el refresco
                     return verifyUser(); // Reintentar la verificación después de refrescar
                 } else {

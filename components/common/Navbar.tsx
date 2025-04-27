@@ -14,7 +14,7 @@ export default function Navbar() {
 	const pathname = usePathname();
 	const dispatch = useAppDispatch();
 	
-	const { isLoggedIn,setIsLoggedIn } = useUser();
+	const { isLoggedIn, setIsLoggedIn } = useUser();
 
 	const [logout] = useLogoutMutation();
 

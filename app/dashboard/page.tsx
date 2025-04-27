@@ -1,15 +1,23 @@
 'use client';
+
 import useFetchUserData from '@/hooks/use-userme';
 import List from '@/components/common/List';
 import Spinner from '@/components/common/Spinner';
+import { useEffect } from 'react';
+import { useUser } from '@/context/UserContext';
 
 export default function Page() {
+    
+    useEffect(() => {
+
+    },[]);
+
     const { userData, isLoading } = useFetchUserData();
 
     const config = [
         {
             label: 'First Name',
-            value: userData?.first_name,
+            value:userData?.first_name,
         },
         {
             label: 'Last Name',
@@ -28,7 +36,7 @@ export default function Page() {
             </div>
         );
     }
-
+    
     return (
         <>
             <header className='bg-white shadow'>

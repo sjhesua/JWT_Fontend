@@ -15,6 +15,7 @@ interface UserContextType {
     setIsLoggedIn: (isLoggedIn: boolean) => void;
     isRefreshingToken: boolean;
     setIsRefreshingToken: (isRefreshing: boolean) => void;
+   
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
